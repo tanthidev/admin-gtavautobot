@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <header class="bg-gray-800 text-white p-4 rounded">
+            <h1 class="text-2xl font-bold">Edit Account</h1>
+        </header>
+
+        <main class="mt-6">
+            <form action="/admin/accounts/update/<%= account._id %>" method="POST" class="bg-white p-6 rounded shadow-md">
+                <div class="mb-4">
+                    <label for="Username" class="block text-gray-700 font-bold">Username</label>
+                    <input type="text" id="Username" name="Username" value="<%= account.Username %>" class="w-full border border-gray-300 p-2 rounded">
+                </div>
+                <div class="mb-4">
+                    <label for="Status" class="block text-gray-700 font-bold">Status</label>
+                    <select id="Status" name="Status" class="w-full border border-gray-300 p-2 rounded">
+                        <option value="Active" <%= account.Status === 'Active' ? 'selected' : '' %>>Active</option>
+                        <option value="Inactive" <%= account.Status === 'Inactive' ? 'selected' : '' %>>Inactive</option>
+                        <option value="Trial" <%= account.Status === 'Trial' ? 'selected' : '' %>>Trial</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="ToolName" class="block text-gray-700 font-bold">Tool Name</label>
+                    <input type="text" id="ToolName" name="ToolName" value="<%= account.ToolName.join(', ') %>" class="w-full border border-gray-300 p-2 rounded">
+                    <small class="text-gray-500">Separate multiple tools with commas.</small>
+                </div>
+                <div class="mb-4">
+                    <label for="Expiration" class="block text-gray-700 font-bold">Expiration</label>
+                    <input type="text" id="Expiration" name="Expiration" value="<%= account.Expiration %>" class="w-full border border-gray-300 p-2 rounded">
+                    <small class="text-gray-500">Format: YYYY-MM-DD HH:mm</small>
+                </div>
+                <div class="mb-4">
+                    <label for="Device_id" class="block text-gray-700 font-bold">Device ID</label>
+                    <input type="text" id="Device_id" name="Device_id" value="<%= account.Device_id %>" class="w-full border border-gray-300 p-2 rounded">
+                </div>
+                <div class="mb-4">
+                    <label for="LoggedIn" class="block text-gray-700 font-bold">Logged In</label>
+                    <select id="LoggedIn" name="LoggedIn" class="w-full border border-gray-300 p-2 rounded">
+                        <option value="Yes" <%= account.LoggedIn ? 'selected' : '' %>>Yes</option>
+                        <option value="No" <%= !account.LoggedIn ? 'selected' : '' %>>No</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="LastLogin" class="block text-gray-700 font-bold">Last Login</label>
+                    <input type="text" id="LastLogin" name="LastLogin" value="<%= account.LastLogin %>" class="w-full border border-gray-300 p-2 rounded">
+                    <small class="text-gray-500">Format: YYYY-MM-DD HH:mm</small>
+                </div>
+                <div class="mb-4">
+                    <label for="LastPing" class="block text-gray-700 font-bold">Last Ping</label>
+                    <input type="text" id="LastPing" name="LastPing" value="<%= account.LastPing %>" class="w-full border border-gray-300 p-2 rounded">
+                    <small class="text-gray-500">Format: YYYY-MM-DD HH:mm</small>
+                </div>
+                <div class="mb-4">
+                    <label for="DeviceChangesToday" class="block text-gray-700 font-bold">Device Changes Today</label>
+                    <input type="number" id="DeviceChangesToday" name="DeviceChangesToday" value="<%= account.DeviceChangesToday %>" class="w-full border border-gray-300 p-2 rounded">
+                </div>
+                <div class="mb-4">
+                    <label for="LimitedChanges" class="block text-gray-700 font-bold">Limited Changes</label>
+                    <input type="number" id="LimitedChanges" name="LimitedChanges" value="<%= account.LimitedChanges %>" class="w-full border border-gray-300 p-2 rounded">
+                </div>
+                <div class="mb-4">
+                    <label for="LastReset" class="block text-gray-700 font-bold">Last Reset</label>
+                    <input type="text" id="LastReset" name="LastReset" value="<%= account.LastReset %>" class="w-full border border-gray-300 p-2 rounded">
+                    <small class="text-gray-500">Format: YYYY-MM-DD HH:mm</small>
+                </div>
+                <div class="mb-4">
+                    <label for="RegisterDate" class="block text-gray-700 font-bold">Register Date</label>
+                    <input type="text" id="RegisterDate" name="RegisterDate" value="<%= account.RegisterDate %>" class="w-full border border-gray-300 p-2 rounded">
+                    <small class="text-gray-500">Format: YYYY-MM-DD HH:mm</small>
+                </div>
+                <div class="mb-4">
+                    <label for="Note" class="block text-gray-700 font-bold">Note</label>
+                    <textarea id="Note" name="Note" class="w-full border border-gray-300 p-2 rounded"><%= account.Note %></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Save</button>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

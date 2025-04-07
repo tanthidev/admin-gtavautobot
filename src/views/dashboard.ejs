@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex">
+    <!-- Sidebar -->
+    <!-- Sidebar -->
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 bg-gray-800 text-white h-screen p-4 hidden md:block fixed md:relative z-50">
+        <h2 class="text-2xl font-bold mb-6">Admin Panel</h2>
+        <nav>
+            <ul>
+                <li class="mb-4">
+                    <a href="#" onclick="showTab('dashboard-tab')" class="block text-gray-300 hover:text-white">Dashboard</a>
+                </li>
+                <li class="mb-4">
+                    <a href="#" onclick="showTab('accounts-tab')" class="block text-gray-300 hover:text-white">Quản lý tài khoản</a>
+                </li>
+                <li class="mb-4">
+                    <a href="#" onclick="showTab('error-logs-tab')" class="block text-gray-300 hover:text-white">Error Logs</a>
+                </li>
+                <li class="mt-8">
+                    <a href="/auth/logout" class="block text-red-500 hover:text-red-700">Logout</a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    
+
+    <!-- Main Content -->
+    <div class="flex-1 p-6 overflow-y-auto h-screen transition-all duration-300">
+        <header class="bg-gray-800 text-white p-4 rounded flex">
+            <!-- Nút mở Sidebar trên màn hình nhỏ -->
+            <button id="toggleSidebar" class="md:hidden bg-gray-800 text-white p-2 rounded top-4 left-4 z-50">
+                ☰
+            </button>
+            <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+        </header>
+
+        
+
+        <!-- Refresh Button -->
+        <div class="mt-4">
+            <button onclick="refreshData()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Refresh Data
+            </button>
+        </div>
+
+        <!-- Tabs -->
+        <main class="mt-6">
+            <!-- Dashboard Tab -->
+            <section id="dashboard-tab" class="tab-content hidden">
+                <h2 class="text-xl font-semibold mb-4">Tổng quan</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Tổng số tài khoản -->
+                    <!-- Tổng số tài khoản -->
+                    <div class="bg-blue-500 text-white p-4 rounded shadow cursor-pointer">
+                        <a href="/admin/dashboard/list/all" class="block">
+                            <h3 class="text-lg font-semibold">Tổng số tài khoản</h3>
+                            <p class="text-2xl font-bold"><%= totalAccounts %></p>
+                        </a>
+                    </div>
+
+                    <!-- Số tài khoản Active -->
+                    <div class="bg-green-500 text-white p-4 rounded shadow cursor-pointer">
+                        <a href="/admin/dashboard/list/active" class="block">
+                            <h3 class="text-lg font-semibold">Tài khoản Active</h3>
+                            <p class="text-2xl font-bold"><%= activeAccounts %></p>
+                        </a>
+                    </div>
+
+                    <!-- Số tài khoản Inactive -->
+                    <div class="bg-yellow-500 text-white p-4 rounded shadow cursor-pointer">
+                        <a href="/admin/dashboard/list/inactive" class="block">
+                            <h3 class="text-lg font-semibold">Tài khoản Inactive</h3>
+                            <p class="text-2xl font-bold"><%= inactiveAccounts %></p>
+                        </a>
+                    </div>
+
+                    <!-- Số người đang Login -->
+                    <div class="bg-purple-500 text-white p-4 rounded shadow cursor-pointer">
+                        <a href="/admin/dashboard/list/loggedIn" class="block">
+                            <h3 class="text-lg font-semibold">Số người đang Login</h3>
+                            <p class="text-2xl font-bold"><%= loggedInUsers %></p>
+                        </a>
+                    </div>
+                    
+                </div>
+            </section>
+        <section id="accounts-tab" class="tab-content">
+            <!-- Accounts Tab -->
+                <div class="mt-4">
+                    <!-- Search and Filter -->
+                    <form method="GET" action="/admin/dashboard" class="flex gap-4 mb-4">
+                        <input 
+                            type="text" 
+                            name="search" 
+                            placeholder="Tìm kiếm username..." 
+                            value="<%= typeof search !== 'undefined' ? search : '' %>" 
+                            class="border px-4 py-2 rounded w-1/3"
+                        >
+                        <select name="status" class="border px-4 py-2 rounded">
+                            <option value="" <%= !status ? 'selected' : '' %>>Tất cả trạng thái</option>
+                            <option value="Active" <%= status === 'Active' ? 'selected' : '' %>>Active</option>
+                            <option value="Inactive" <%= status === 'Inactive' ? 'selected' : '' %>>Inactive</option>
+                            <option value="Trial" <%= status === 'Trial' ? 'selected' : '' %>>Trial</option>
+                        </select>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Lọc</button>
+                    </form>
+                </div>
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="py-2 px-4 border border-gray-300">Username</th>
+                                <th class="py-2 px-4 border border-gray-300">Status</th>
+                                <th class="py-2 px-4 border border-gray-300">Tool Name</th>
+                                <th class="py-2 px-4 border border-gray-300">Expiration</th>
+                                <th class="py-2 px-4 border border-gray-300">Logged In</th>
+                                <th class="py-2 px-4 border border-gray-300">Last Ping</th>
+                                <th class="py-2 px-4 border border-gray-300">Device Changes Today</th>
+                                <th class="py-2 px-4 border border-gray-300">Limited Changes</th>
+                                <th class="py-2 px-4 border border-gray-300">Register Date</th>
+                                <th class="py-2 px-4 border border-gray-300">Note</th>
+                                <th class="py-2 px-4 border border-gray-300">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% accounts.forEach(account => { %>
+                            <tr class="text-center">
+                                <td class="py-2 px-4 border border-gray-300"><%= account.Username %></td>
+                                <td class="py-2 px-4 border border-gray-300"><%= account.Status %></td>
+                                <td class="py-2 px-4 border border-gray-300"><%= account.ToolName.join(', ') %></td>
+                                <td class="py-2 px-4 border border-gray-300"><%= account.Expiration || '' %></td>
+                                <td class="py-2 px-4 border border-gray-300"><%= account.LoggedIn %></td>
+                                <td class="py-2 px-4 border border-gray-300"><%= account.LastPing || '' %></td>
+                                <td class="py-2 px-4 border border-gray-300"><%= account.DeviceChangesToday || 0 %></td>
+                                <td class="py-2 px-4 border border-gray-300"><%= account.LimitedChanges || 0 %></td>
+                                <td class="py-2 px-4 border border-gray-300"><%= account.RegisterDate || '' %></td>
+                                <td class="py-2 px-4 border border-gray-300"><%= account.Note || '' %></td>
+                                <td class="py-2 px-4 border border-gray-300">
+                                    <!-- Edit Button -->
+                                    <a href="/admin/accounts/edit/<%= account._id %>"  
+                                       class="bg-gray-500 text-white px-3 py-1 mb-1 rounded hover:bg-gray-600 transition duration-200 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-1.5L9 14.5V17h2.5l7.5-7.5m-2.036-1.5L15.232 5.232z" />
+                                        </svg>
+                                        Edit
+                                    </a>
+                            
+                                
+                                    <!-- View Details Button -->
+                                    <a href="/admin/accounts/<%= account.Username %>" 
+                                       class="bg-gray-500 text-white px-3 py-1 mb-1 rounded hover:bg-gray-600 transition duration-200 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-4.553a2 2 0 00-2.828-2.828L10 7.172M9 11l-4.553 4.553a2 2 0 002.828 2.828L14 12.828M15 10l-4.553 4.553a2 2 0 01-2.828 0L5 12.828" />
+                                        </svg>
+                                        View
+                                    </a>
+
+                                    <!-- Delete Button -->
+                                    <a href="#" 
+                                       onclick="confirmDelete('<%= account._id %>')" 
+                                       class="bg-red-400 text-white px-3 py-1  rounded hover:bg-red-500 transition duration-200 flex items-center gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="mt-4 flex justify-center">
+                    <% if (pagination) { %>
+                        <% if (pagination.prevPage) { %>
+                            <a href="?page=<%= pagination.prevPage %>&search=<%= search || '' %>&status=<%= status || '' %>" 
+                            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 mx-1">Previous</a>
+                        <% } %>
+                        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                            <a href="?page=<%= i %>&search=<%= search || '' %>&status=<%= status || '' %>" 
+                            class="px-4 py-2 <%= pagination.currentPage === i ? 'bg-blue-500 text-white' : 'bg-gray-300' %> rounded hover:bg-gray-400 mx-1">
+                                <%= i %>
+                            </a>
+                        <% } %>
+                        <% if (pagination.nextPage) { %>
+                            <a href="?page=<%= pagination.nextPage %>&search=<%= search || '' %>&status=<%= status || '' %>" 
+                            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 mx-1">Next</a>
+                        <% } %>
+                    <% } %>
+                </div>
+        </section>
+
+            <!-- Error Logs Tab -->
+            <section id="error-logs-tab" class="tab-content hidden">
+                <h2 class="text-xl font-semibold mb-4">Error Logs</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="py-2 px-4 border border-gray-300">Time</th>
+                                <th class="py-2 px-4 border border-gray-300">Tool</th>
+                                <th class="py-2 px-4 border border-gray-300">Error Message</th>
+                                <th class="py-2 px-4 border border-gray-300">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% errorLogs.forEach(log => { %>
+                            <tr class="text-center">
+                                <td class="py-2 px-4 border border-gray-300"><%= log.time %></td>
+                                <td class="py-2 px-4 border border-gray-300"><%= log.tool %></td>
+                                <td class="py-2 px-4 border border-gray-300"><%= log.error_message %></td>
+                                <td class="py-2 px-4 border border-gray-300">
+                                    <button onclick="deleteErrorLog('<%= log._id %>')" 
+                                            class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition duration-200">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+
+<script>
+    function confirmDelete(accountId) {
+        if (confirm('Bạn có chắc chắn muốn xóa tài khoản này?')) {
+            window.location.href = `/admin/accounts/delete/${accountId}`;
+        }
+    }
+
+    function deleteErrorLog(logId) {
+        if (confirm('Bạn có chắc chắn muốn xóa log này?')) {
+            fetch(`/admin/error-logs/delete/${logId}`, {
+                method: 'DELETE',
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Log đã được xóa!');
+                    location.reload(); // Tải lại trang sau khi xóa
+                } else {
+                    alert('Không thể xóa log. Vui lòng thử lại.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Đã xảy ra lỗi. Vui lòng thử lại.');
+            });
+        }
+    }
+
+    const toggleSidebar = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.querySelector('.flex-1');
+
+    toggleSidebar.addEventListener('click', () => {
+        sidebar.classList.toggle('hidden');
+        mainContent.classList.toggle('ml-64');
+    });
+
+    function showTab(tabId) {
+        // Ẩn tất cả các tab
+        const tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => tab.classList.add('hidden'));
+
+        // Hiển thị tab được chọn
+        const selectedTab = document.getElementById(tabId);
+        console.log(selectedTab);
+        if (selectedTab) {
+            selectedTab.classList.remove('hidden');
+        }
+    }
+</script>
+
+</html>

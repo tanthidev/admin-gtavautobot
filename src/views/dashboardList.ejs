@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <header class="bg-gray-800 text-white p-4 rounded mb-6">
+        <h1 class="text-2xl font-bold">
+            <% if (type === 'loggedIn') { %>
+                Danh sách người đang Login
+            <% } else if (type === 'active') { %>
+                Danh sách tài khoản Active
+            <% } else if (type === 'inactive') { %>
+                Danh sách tài khoản Inactive
+            <% } else { %>
+                Danh sách tất cả tài khoản
+            <% } %>
+        </h1>
+    </header>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full border-collapse border border-gray-300">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="py-2 px-4 border border-gray-300">Username</th>
+                    <th class="py-2 px-4 border border-gray-300">Tool</th>
+                    <th class="py-2 px-4 border border-gray-300">Status</th>
+                    <th class="py-2 px-4 border border-gray-300">Logged In</th>
+                    <th class="py-2 px-4 border border-gray-300">Note</th>
+
+                    <th class="py-2 px-4 border border-gray-300">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% accounts.forEach(account => { %>
+                <tr class="text-center">
+                    <td class="py-2 px-4 border border-gray-300"><%= account.Username %></td>
+                    <td class="py-2 px-4 border border-gray-300"><%= account.ToolName %></td>
+                    <td class="py-2 px-4 border border-gray-300"><%= account.Status %></td>
+                    <td class="py-2 px-4 border border-gray-300"><%= account.LoggedIn%></td>
+                    <td class="py-2 px-4 border border-gray-300"><%= account.Note%></td>
+
+                    <td class="py-2 px-4 border border-gray-300">
+                        <a href="/admin/accounts/edit/<%= account._id %>"  
+                            class="bg-gray-500 text-white px-3 py-1 mb-1 rounded hover:bg-gray-600 transition duration-200 flex items-center gap-1">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-1.5L9 14.5V17h2.5l7.5-7.5m-2.036-1.5L15.232 5.232z" />
+                             </svg>
+                             Edit
+                         </a>
+                 
+                     
+                         <!-- View Details Button -->
+                         <a href="/admin/accounts/<%= account.Username %>" 
+                            class="bg-gray-500 text-white px-3 py-1 mb-1 rounded hover:bg-gray-600 transition duration-200 flex items-center gap-1">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-4.553a2 2 0 00-2.828-2.828L10 7.172M9 11l-4.553 4.553a2 2 0 002.828 2.828L14 12.828M15 10l-4.553 4.553a2 2 0 01-2.828 0L5 12.828" />
+                             </svg>
+                             View
+                         </a>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <footer class="mt-6">
+        <a href="/admin/dashboard" class="text-blue-500 hover:underline">Back to Dashboard</a>
+    </footer>
+</body>
+</html>
